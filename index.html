@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥂 Вопросы и Задания для Нашего Вечера</title>
+    <style>
+        /* ------------------- */
+        /* Базовые Стили */
+        /* ------------------- */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f8f0f0;
+            font-family: 'Georgia', serif;
+            color: #383838;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #5d4a66;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: normal;
+        }
+
+        /* ------------------- */
+        /* Стилизация Категорий */
+        /* ------------------- */
+        .category-selection {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            max-width: 800px;
+            margin-bottom: 30px;
+        }
+
+        .category-selection button {
+            padding: 8px 15px;
+            font-size: 0.9em;
+            border: 2px solid;
+            border-radius: 20px;
+            background-color: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            color: #555;
+        }
+
+        .category-selection button:hover {
+            color: white !important;
+        }
+
+        .category-selection button.active {
+            color: black !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* ------------------- */
+        /* Карточка и текст */
+        /* ------------------- */
+        .card-container {
+            perspective: 1000px;
+            width: 320px;
+            height: 420px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+            background-color: transparent;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 30px 20px;
+            border-radius: 20px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            word-break: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+
+            font-family: 'Trebuchet MS', 'Helvetica', sans-serif;
+            font-weight: 500;
+        }
+
+        .card-front {
+            color: white;
+            font-size: 1.8em;
+            font-weight: bold;
+            transform: rotateY(0deg);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+
+        .card-back {
+            background-color: #ffffff;
+            color: #383838;
+            font-size: 1.3em;
+            line-height: 1.6;
+            transform: rotateY(180deg);
+            border: 5px solid;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+
+            transition: all 0.3s;
+        }
+
+        .card-back.dynamic-background {
+            background-color: #ffffff;
+            background-image: linear-gradient(180deg, rgba(255, 255, 255, 0) 50%, var(--card-soft-color) 100%);
+            background-size: 100% 100%;
+            transition: background-image 0.5s;
+        }
+
+        .card-back p {
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            transition-delay: 0.3s;
+        }
+
+        .card.is-flipped .card-back p {
+            opacity: 1;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .is-task {
+            font-weight: bold;
+        }
+
+        .is-finished {
+            font-weight: bold;
+            color: #4a4a4a;
+            font-size: 1.1em !important;
+            line-height: 1.4;
+        }
+
+        /* ------------------- */
+        /* Кнопки */
+        /* ------------------- */
+        #nextQuestionButton {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 50px;
+            background-color: #5d4a66;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(93, 74, 102, 0.4);
+            transition: background-color 0.3s, transform 0.2s;
+            margin-bottom: 10px;
+        }
+
+        #nextQuestionButton:hover {
+            background-color: #796683;
+            transform: translateY(-2px);
+        }
+
+        #resetButton {
+            background-color: #f7a300;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        #resetButton:hover {
+            background-color: #e69500;
+        }
+
+        /* ------------------- */
+        /* Чекбокс */
+        /* ------------------- */
+        .tasks-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+            color: #5d4a66;
+            margin: 15px 0;
+        }
+
+        input[type="checkbox"] {
+            accent-color: #A36F8F;
+            transform: scale(1.2);
+        }
+
+        /* Загрузка */
+        #loading {
+            color: #5d4a66;
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🥂 Наши Откровения</h1>
+
+    <div class="category-selection">
+        <button id="btn-romantic">💖 Чувства и близость</button>
+        <button id="btn-flirty">😏 Игривые и флиртующие</button>
+        <button id="btn-dreams">🌌 Мечты, глубина, будущее</button>
+        <button id="btn-fantasy">🎭 Игра и “а если бы…”</button>
+        <button id="btn-spicy18">🔥 18+ интим и желание</button>
+        <button id="btn-spicy21">💦 21+ максимально откровенные</button>
+        <button id="btn-mix">🌈 МИКС</button>
+    </div>
+
+    <div class="card-container">
+        <div id="questionCard" class="card">
+            <div id="cardFront" class="card-face card-front">
+                <span id="categoryLabel">Загрузка...</span><br><br>
+                Подождите немного.
+            </div>
+            <div id="cardBack" class="card-face card-back dynamic-background">
+                <p id="questionContent">Загрузка контента...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="tasks-toggle-container">
+        <input type="checkbox" id="includeTasksToggle" checked>
+        <label for="includeTasksToggle">Включать задания (мини-игры, действия)</label>
+    </div>
+
+    <button id="nextQuestionButton" style="display: none;" onclick="showRandomQuestionOrTask()">Следующий Контент</button>
+
+    <button id="resetButton" style="display: none;" onclick="resetLocalStorage()">Начать Новую Игру (Сбросить)</button>
+
+    <div id="loading">Загрузка вопросов...</div>
+
+<script>
+        const colors = {
+            romantic: { gradient: 'linear-gradient(135deg, #A36F8F 0%, #D8B8C2 100%)', mainColor: '#A36F8F', softColor: 'rgba(163, 111, 143, 0.28)', shadowColor: '#5d4a66' },
+            flirty: { gradient: 'linear-gradient(135deg, #FF7AA2 0%, #FFB8B8 100%)', mainColor: '#FF7AA2', softColor: 'rgba(255, 122, 162, 0.28)', shadowColor: '#E65A8C' },
+            dreams: { gradient: 'linear-gradient(135deg, #5D54A4 0%, #A49FDB 100%)', mainColor: '#5D54A4', softColor: 'rgba(93, 84, 164, 0.28)', shadowColor: '#453E85' },
+            fantasy: { gradient: 'linear-gradient(135deg, #74A892 0%, #BBD1C9 100%)', mainColor: '#74A892', softColor: 'rgba(116, 168, 146, 0.28)', shadowColor: '#5A8B74' },
+            spicy18: { gradient: 'linear-gradient(135deg, #8B0036 0%, #C03957 100%)', mainColor: '#C03957', softColor: 'rgba(192, 57, 87, 0.28)', shadowColor: '#8B0036' },
+            spicy21: { gradient: 'linear-gradient(135deg, #C6286D 0%, #F06292 100%)', mainColor: '#F06292', softColor: 'rgba(240, 98, 146, 0.28)', shadowColor: '#C6286D' },
+            mix: { gradient: 'linear-gradient(135deg, #A400BF 0%, #00C6FF 100%)', mainColor: '#A400BF', softColor: 'rgba(164, 0, 191, 0.28)', shadowColor: '#7A0099' }
+        };
+
+        const categoryNames = {
+            romantic: '💖 Чувства и близость',
+            flirty: '😏 Игривые и флиртующие',
+            dreams: '🌌 Мечты, глубина, будущее',
+            fantasy: '🎭 Игра и “а если бы…”',
+            spicy18: '🔥 18+ интим и желание',
+            spicy21: '💦 21+ максимально откровенные',
+            mix: '🌈 МИКС (Все категории)'
+        };
+
+        const CATEGORY_KEYS = ['romantic', 'flirty', 'dreams', 'fantasy', 'spicy18', 'spicy21'];
+        const CHANCE_FOR_TASK = 0.30;
+        const CARD_FLIP_DURATION = 300;
+
+        // Глобальные переменные
+        let contentState = {};
+        let sessionHistory = {};
+        let baseButtonStyles = {};
+
+        const cardElement = document.getElementById('questionCard');
+        const cardFront = document.getElementById('cardFront');
+        const cardBack = document.getElementById('cardBack');
+        const questionContent = document.getElementById('questionContent');
+        const nextQuestionButton = document.getElementById('nextQuestionButton');
+        const resetButton = document.getElementById('resetButton');
+        const loadingIndicator = document.getElementById('loading');
+
+        let currentCategory = 'romantic';
+
+        // --- Функции ---
+
+        function saveHistory() {
+            localStorage.setItem('sessionHistory', JSON.stringify(sessionHistory));
+        }
+
+        function loadHistory() {
+            const history = localStorage.getItem('sessionHistory');
+            sessionHistory = history ? JSON.parse(history) : {};
+        }
+
+        function resetLocalStorage() {
+            localStorage.removeItem('sessionHistory');
+            window.location.reload();
+        }
+
+        function markdownToHtml(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
+        }
+
+        function getAvailableContent(categoryKey) {
+            if (categoryKey === 'mix') {
+                let allAvailable = [];
+                for (const cat of CATEGORY_KEYS) {
+                    allAvailable.push(...getAvailableContent(cat));
+                }
+                return allAvailable;
+            }
+
+            const categoryContent = contentState[categoryKey] || [];
+            const categoryHistory = sessionHistory[categoryKey] || [];
+
+            return categoryContent.filter(item => {
+                const key = `${item.isTask ? 'task' : 'q'}:${item.content}`;
+                return !categoryHistory.includes(key);
+            });
+        }
+
+        function getNextContent() {
+            let availableContent = [];
+
+            if (currentCategory === 'mix') {
+                availableContent = getAvailableContent('mix');
+            } else {
+                availableContent = getAvailableContent(currentCategory);
+            }
+
+            if (availableContent.length === 0) {
+                return null;
+            }
+
+            const includeTasks = document.getElementById('includeTasksToggle').checked;
+            let nextContent = null;
+
+            if (includeTasks && Math.random() < CHANCE_FOR_TASK) {
+                const availableTasks = availableContent.filter(item => item.isTask);
+                if (availableTasks.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableTasks.length);
+                    nextContent = availableTasks[randomIndex];
+                }
+            }
+
+            if (!nextContent) {
+                const availableQuestions = availableContent.filter(item => !item.isTask);
+                if (availableQuestions.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+                    nextContent = availableQuestions[randomIndex];
+                } else if (includeTasks) {
+                    const availableTasks = availableContent.filter(item => item.isTask);
+                    if (availableTasks.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * availableTasks.length);
+                        nextContent = availableTasks[randomIndex];
+                    }
+                }
+            }
+
+            if (nextContent) {
+                const targetCategory = nextContent.category;
+                const key = `${nextContent.isTask ? 'task' : 'q'}:${nextContent.content}`;
+                if (!sessionHistory[targetCategory]) {
+                    sessionHistory[targetCategory] = [];
+                }
+                if (!sessionHistory[targetCategory].includes(key)) {
+                    sessionHistory[targetCategory].push(key);
+                    saveHistory();
+                }
+
+                return {
+                    content: nextContent.content,
+                    isTask: nextContent.isTask,
+                    category: targetCategory
+                };
+            }
+
+            return null;
+        }
+
+        function initializeCategoryButtons() {
+            CATEGORY_KEYS.concat(['mix']).forEach(cat => {
+                const btn = document.getElementById(`btn-${cat}`);
+                if (btn) {
+                    const color = colors[cat];
+                    baseButtonStyles[cat] = {
+                        borderColor: color.mainColor,
+                        color: color.mainColor
+                    };
+                    btn.style.borderColor = color.mainColor;
+                    btn.style.color = color.mainColor;
+                    btn.onclick = () => setCategory(cat);
+                }
+            });
+        }
+
+        function setCategory(category) {
+            currentCategory = category;
+
+            // Сброс всех кнопок
+            CATEGORY_KEYS.concat(['mix']).forEach(cat => {
+                const btn = document.getElementById(`btn-${cat}`);
+                if (btn) {
+                    btn.classList.remove('active');
+                    const base = baseButtonStyles[cat];
+                    if (base) {
+                        btn.style.backgroundColor = '';
+                        btn.style.color = base.color;
+                        btn.style.borderColor = base.borderColor;
+                        btn.style.boxShadow = '';
+                    }
+                }
+            });
+
+            // Активация выбранной
+            const activeBtn = document.getElementById(`btn-${category}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                const c = colors[category];
+                activeBtn.style.backgroundColor = c.mainColor;
+                activeBtn.style.color = 'black';
+                activeBtn.style.borderColor = c.mainColor;
+                activeBtn.style.boxShadow = `0 4px 10px ${c.shadowColor}50`;
+            }
+
+            // Обновление стилей карточки
+            const c = colors[category];
+            cardFront.style.background = c.gradient;
+            cardBack.style.borderColor = c.mainColor;
+            cardBack.style.setProperty('--card-soft-color', c.softColor);
+            nextQuestionButton.style.backgroundColor = c.mainColor;
+            nextQuestionButton.style.boxShadow = `0 6px 20px ${c.shadowColor}40`;
+
+            cardElement.classList.remove('is-flipped');
+            questionContent.classList.remove('is-task', 'is-finished');
+            questionContent.style.color = '#383838';
+
+            const availableCount = getAvailableContent(currentCategory).length;
+            if (availableCount === 0) {
+                showFinishedMessage();
+            } else {
+                questionContent.textContent = "Нажмите 'Следующий Контент', чтобы начать в этой категории.";
+                document.getElementById('categoryLabel').textContent = categoryNames[category];
+                nextQuestionButton.style.display = 'block';
+                resetButton.style.display = 'none';
+            }
+        }
+
+        function showFinishedMessage() {
+            document.getElementById('categoryLabel').textContent = categoryNames[currentCategory];
+            questionContent.textContent = `Вопросы и задания ${currentCategory === 'mix' ? 'во всех категориях' : 'в этой категории'} закончились! Выберите новую категорию или сбросьте игру, чтобы начать заново.`;
+            questionContent.classList.add('is-finished');
+            questionContent.style.color = '#4a4a4a';
+            nextQuestionButton.style.display = 'none';
+            resetButton.style.display = 'block';
+            cardElement.classList.remove('is-flipped');
+            setTimeout(() => {
+                cardElement.classList.add('is-flipped');
+            }, CARD_FLIP_DURATION);
+        }
+
+        function showRandomQuestionOrTask() {
+            const wasFlipped = cardElement.classList.contains('is-flipped');
+            if (wasFlipped) {
+                cardElement.classList.remove('is-flipped');
+            }
+
+            const delay = wasFlipped ? CARD_FLIP_DURATION : 0;
+
+            setTimeout(() => {
+                const result = getNextContent();
+
+                if (!result) {
+                    showFinishedMessage();
+                    return;
+                }
+
+                const resultCategoryColors = colors[result.category];
+                cardBack.style.borderColor = resultCategoryColors.mainColor;
+                cardBack.style.setProperty('--card-soft-color', resultCategoryColors.softColor);
+
+                questionContent.innerHTML = markdownToHtml(result.content);
+                questionContent.classList.toggle('is-task', result.isTask);
+
+                if (result.isTask) {
+                    questionContent.style.color = resultCategoryColors.mainColor;
+                } else {
+                    questionContent.style.color = '#383838';
+                }
+
+                cardElement.classList.add('is-flipped');
+            }, delay);
+        }
+
+        // --- Загрузка внешних данных ---
+        async function loadContentFromFiles() {
+            try {
+                const [questionsRes, tasksRes] = await Promise.all([
+                    fetch('questions.json'),
+                    fetch('tasks.json')
+                ]);
+
+                if (!questionsRes.ok || !tasksRes.ok) {
+                    throw new Error('Ошибка загрузки файлов');
+                }
+
+                const questions = await questionsRes.json();
+                const tasks = await tasksRes.json();
+
+                contentState = {};
+                CATEGORY_KEYS.forEach(cat => {
+                    const qList = questions[cat] || [];
+                    const tList = tasks[cat] || [];
+                    const questionsMapped = qList.map(q => ({ content: q, isTask: false, category: cat }));
+                    const tasksMapped = tList.map(t => ({ content: t, isTask: true, category: cat }));
+                    contentState[cat] = [...questionsMapped, ...tasksMapped];
+                });
+
+                // Скрываем индикатор загрузки
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                nextQuestionButton.style.display = 'block';
+                document.getElementById('categoryLabel').textContent = categoryNames[currentCategory];
+                questionContent.textContent = "Нажмите 'Следующий Контент', чтобы начать в этой категории.";
+
+            } catch (error) {
+                console.error('Не удалось загрузить вопросы/задания:', error);
+                if (loadingIndicator) {
+                    loadingIndicator.textContent = '⚠️ Ошибка загрузки контента. Проверьте файлы questions.json и tasks.json.';
+                    loadingIndicator.style.color = '#c03957';
+                }
+            }
+        }
+
+        // --- Инициализация ---
+        window.onload = async function() {
+            initializeCategoryButtons();
+            loadHistory();
+            await loadContentFromFiles();
+            setCategory('romantic');
+        };
+    </script>
+</body>
+</html>
