@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥂 Вопросы и Задания для Нашего Вечера</title>
+    <title>❤️Lovely Cards❤️</title>
     <style>
         /* ------------------- */
         /* Базовые Стили */
@@ -279,23 +279,23 @@
 </head>
 <body>
 
-    <h1>🥂 Наши Откровения</h1>
+    <h1>🥂 Вечер для двоих</h1>
 
     <div class="category-selection">
-        <button id="btn-romantic">💖 Чувства и близость</button>
-        <button id="btn-flirty">😏 Игривые и флиртующие</button>
-        <button id="btn-dreams">🌌 Мечты, глубина, будущее</button>
-        <button id="btn-fantasy">🎭 Игра и “а если бы…”</button>
-        <button id="btn-spicy18">🔥 18+ интим и желание</button>
-        <button id="btn-spicy21">💦 21+ максимально откровенные</button>
-        <button id="btn-mix">🌈 МИКС</button>
+        <button id="btn-romantic">💞 Про нас и любовь</button>
+        <button id="btn-flirty">😏 Шалости и улыбки</button>
+        <button id="btn-dreams">🌠 Мечты и будущее</button>
+        <button id="btn-fantasy">🎭 А что, если...?</button>
+        <button id="btn-spicy18">🔥 Язык желаний 18+</button>
+        <button id="btn-spicy21">💦 За гранью условностей 21+</button>
+        <button id="btn-mix">🎯 Случайное приключение</button>
     </div>
 
     <div class="card-container">
         <div id="questionCard" class="card">
             <div id="cardFront" class="card-face card-front">
                 <span id="categoryLabel">Загрузка...</span><br><br>
-                Подождите немного.
+                
             </div>
             <div id="cardBack" class="card-face card-back dynamic-background">
                 <p id="questionContent">Загрузка контента...</p>
@@ -308,7 +308,7 @@
         <label for="includeTasksToggle">Включать задания (мини-игры, действия)</label>
     </div>
 
-    <button id="nextQuestionButton" style="display: none;" onclick="showRandomQuestionOrTask()">Следующий Контент</button>
+    <button id="nextQuestionButton" style="display: none;" onclick="showRandomQuestionOrTask()">Следующий вопрос</button>
 
     <button id="resetButton" style="display: none;" onclick="resetLocalStorage()">Начать Новую Игру (Сбросить)</button>
 
@@ -326,13 +326,13 @@
         };
 
         const categoryNames = {
-            romantic: '💖 Чувства и близость',
-            flirty: '😏 Игривые и флиртующие',
-            dreams: '🌌 Мечты, глубина, будущее',
-            fantasy: '🎭 Игра и “а если бы…”',
-            spicy18: '🔥 18+ интим и желание',
-            spicy21: '💦 21+ максимально откровенные',
-            mix: '🌈 МИКС (Все категории)'
+            romantic: '💞 Про нас и любовь',
+            flirty: '😏 Шалости и улыбки',
+            dreams: '🌠 Планы и мечты',
+            fantasy: '🎭 А что, если...?',
+            spicy18: '🔥 Язык желаний 18+ ',
+            spicy21: '💦 За гранью условностей 21+ ',
+            mix: '🎯 Случайное приключение'
         };
 
         const CATEGORY_KEYS = ['romantic', 'flirty', 'dreams', 'fantasy', 'spicy18', 'spicy21'];
@@ -514,7 +514,7 @@
             if (availableCount === 0) {
                 showFinishedMessage();
             } else {
-                questionContent.textContent = "Нажмите 'Следующий Контент', чтобы начать в этой категории.";
+                questionContent.textContent = "Нажмите 'Следующий вопрос', чтобы начать в этой категории.";
                 document.getElementById('categoryLabel').textContent = categoryNames[category];
                 nextQuestionButton.style.display = 'block';
                 resetButton.style.display = 'none';
@@ -595,7 +595,7 @@
                 if (loadingIndicator) loadingIndicator.style.display = 'none';
                 nextQuestionButton.style.display = 'block';
                 document.getElementById('categoryLabel').textContent = categoryNames[currentCategory];
-                questionContent.textContent = "Нажмите 'Следующий Контент', чтобы начать в этой категории.";
+                questionContent.textContent = "Нажмите 'Следующий вопрос', чтобы начать в этой категории.";
 
             } catch (error) {
                 console.error('Не удалось загрузить вопросы/задания:', error);
@@ -626,4 +626,5 @@
 </body>
 
 </html>
+
 
