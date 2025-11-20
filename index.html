@@ -291,32 +291,64 @@
             -webkit-backdrop-filter: blur(2px);
         }
 
-                /* Кнопка переключения категорий */
-        .toggle-btn {
-            background: #f0e6e9;
-            border: 1px solid #d8b8c2;
+        /* Крупная кнопка-спойлер для мобильных */
+        .toggle-btn-large {
+            background: linear-gradient(135deg, #f8f0f0, #f0e6e9);
+            border: 2px solid #d8b8c2;
             color: #5d4a66;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.95em;
+            padding: 14px 24px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
             cursor: pointer;
-            margin-bottom: 15px;
-            display: none; /* по умолчанию скрыта на десктопе */
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            display: none; /* Скрыта на десктопе */
+            font-family: 'Georgia', serif;
         }
         
-        /* На мобильных — показываем кнопку и скрываем категории */
+        .toggle-btn-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            background: linear-gradient(135deg, #f0e6e9, #e8d8e0);
+        }
+        
+        /* Контент под спойлером */
+        .header-content {
+            text-align: center;
+        }
+        
+        /* Медиа-запрос: только на мобильных */
         @media (max-width: 600px) {
-            .toggle-btn {
+            .toggle-btn-large {
                 display: block;
             }
         
-            .category-selection {
+            .header-content {
                 display: none;
-                margin-top: 10px;
             }
         
-            .category-selection.active {
-                display: flex;
+            .header-content.active {
+                display: block;
+                animation: fadeIn 0.4s ease;
+            }
+        
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        
+            /* На мобильных уберём лишний отступ у h1 */
+            .header-content h1 {
+                margin-top: 0;
+                font-size: 2.1em;
+            }
+        
+            /* Кнопки категорий — чуть компактнее */
+            .category-selection button {
+                padding: 6px 12px;
+                font-size: 0.85em;
             }
         }
         
@@ -324,10 +356,10 @@
 </head>
 <body>
 
-    <h1>🥂 Вечер для двоих</h1>
-
-    <div class="categories-wrapper">
-        <button id="toggleCategories" class="toggle-btn">🔽 Выбрать категорию</button>
+<div class="header-section">
+    <button id="toggleHeader" class="toggle-btn-large">🔽 Начать наш вечер</button>
+    <div class="header-content" id="headerContent">
+        <h1>🥂 Вечер для двоих</h1>
         <div class="category-selection" id="categorySelection">
             <button id="btn-romantic">💞 Про нас и любовь</button>
             <button id="btn-flirty">😏 Шалости и улыбки</button>
@@ -338,6 +370,7 @@
             <button id="btn-mix">🎯 Случайное приключение</button>
         </div>
     </div>
+</div>
 
     <div class="card-container">
         <div id="questionCard" class="card">
@@ -668,18 +701,18 @@
             document.body.classList.add('no-3d');
         }
 
-        // Переключение видимости категорий на мобильных
+        // Управление скрытием/показом заголовка и категорий на мобильных
         document.addEventListener('DOMContentLoaded', function() {
-            const toggleBtn = document.getElementById('toggleCategories');
-            const categorySelection = document.getElementById('categorySelection');
+            const toggleBtn = document.getElementById('toggleHeader');
+            const headerContent = document.getElementById('headerContent');
         
-            if (toggleBtn && categorySelection) {
+            if (toggleBtn && headerContent) {
                 toggleBtn.addEventListener('click', function() {
-                    const isActive = categorySelection.classList.contains('active');
-                    categorySelection.classList.toggle('active', !isActive);
+                    const isActive = headerContent.classList.contains('active');
+                    headerContent.classList.toggle('active', !isActive);
                     toggleBtn.textContent = isActive 
-                        ? '🔽 Выбрать категорию' 
-                        : '🔼 Скрыть категории';
+                        ? '🔽 Начать наш вечер' 
+                        : '🔼 Скрыть меню';
                 });
             }
         });
@@ -695,6 +728,7 @@
 </body>
 
 </html>
+
 
 
 
