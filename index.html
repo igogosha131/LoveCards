@@ -279,6 +279,7 @@
             margin-top: 20px;
             padding: 12px 20px;
             background: rgba(248, 240, 240, 0.7);
+            border: 1px solid rgba(163, 111, 143, 0.3);
             border-radius: 16px;
             font-size: 0.95em;
             color: #5d4a66;
@@ -289,6 +290,35 @@
             backdrop-filter: blur(2px); /* лёгкое размытие фона (опционально) */
             -webkit-backdrop-filter: blur(2px);
         }
+
+                /* Кнопка переключения категорий */
+        .toggle-btn {
+            background: #f0e6e9;
+            border: 1px solid #d8b8c2;
+            color: #5d4a66;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: none; /* по умолчанию скрыта на десктопе */
+        }
+        
+        /* На мобильных — показываем кнопку и скрываем категории */
+        @media (max-width: 600px) {
+            .toggle-btn {
+                display: block;
+            }
+        
+            .category-selection {
+                display: none;
+                margin-top: 10px;
+            }
+        
+            .category-selection.active {
+                display: flex;
+            }
+        }
         
     </style>
 </head>
@@ -296,14 +326,17 @@
 
     <h1>🥂 Вечер для двоих</h1>
 
-    <div class="category-selection">
-        <button id="btn-romantic">💞 Про нас и любовь</button>
-        <button id="btn-flirty">😏 Шалости и улыбки</button>
-        <button id="btn-dreams">🌠 Мечты и будущее</button>
-        <button id="btn-fantasy">🎭 А что, если...?</button>
-        <button id="btn-spicy18">🔥 Язык желаний 18+</button>
-        <button id="btn-spicy21">💦 За гранью условностей 21+</button>
-        <button id="btn-mix">🎯 Случайное приключение</button>
+    <div class="categories-wrapper">
+        <button id="toggleCategories" class="toggle-btn">🔽 Выбрать категорию</button>
+        <div class="category-selection" id="categorySelection">
+            <button id="btn-romantic">💞 Про нас и любовь</button>
+            <button id="btn-flirty">😏 Шалости и улыбки</button>
+            <button id="btn-dreams">🌠 Мечты и будущее</button>
+            <button id="btn-fantasy">🎭 А что, если...?</button>
+            <button id="btn-spicy18">🔥 Язык желаний 18+</button>
+            <button id="btn-spicy21">💦 За гранью условностей 21+</button>
+            <button id="btn-mix">🎯 Случайное приключение</button>
+        </div>
     </div>
 
     <div class="card-container">
@@ -635,6 +668,22 @@
             document.body.classList.add('no-3d');
         }
 
+        // Переключение видимости категорий на мобильных
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleCategories');
+            const categorySelection = document.getElementById('categorySelection');
+        
+            if (toggleBtn && categorySelection) {
+                toggleBtn.addEventListener('click', function() {
+                    const isActive = categorySelection.classList.contains('active');
+                    categorySelection.classList.toggle('active', !isActive);
+                    toggleBtn.textContent = isActive 
+                        ? '🔽 Выбрать категорию' 
+                        : '🔼 Скрыть категории';
+                });
+            }
+        });
+
         // --- Инициализация ---
         window.onload = async function() {
             initializeCategoryButtons();
@@ -646,6 +695,7 @@
 </body>
 
 </html>
+
 
 
 
